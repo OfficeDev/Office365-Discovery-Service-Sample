@@ -1,0 +1,114 @@
+﻿<Page
+    x:Class="Win8ServiceDiscovery.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Win8ServiceDiscovery"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid x:Name="Grid" 
+          Margin="0,0,0,0"
+          HorizontalAlignment="Stretch" 
+          VerticalAlignment="Stretch" 
+          Background="{StaticResource ApplicationPageBackgroundThemeBrush}" >
+
+        <StackPanel Orientation="Vertical" Margin="48,15,0,0" >
+            <TextBlock x:Name="Title"
+                       Height="Auto"
+                       HorizontalAlignment="Left" 
+                       VerticalAlignment="Top"                    
+                       Text="Office 365 Discovery Service Sample" 
+                       FontWeight="Bold" 
+                       FontSize="36" 
+                       Foreground="{StaticResource ApplicationHeaderForegroundThemeBrush}" Width="636" />
+            <TextBlock x:Name="Description"   
+                       Margin="0,20,0,0"
+                       Height="Auto" 
+                       HorizontalAlignment="Stretch" 
+                       VerticalAlignment="Top" 
+                       TextWrapping="Wrap" 
+                       FontSize="20"
+                       Foreground="{StaticResource ApplicationForegroundThemeBrush}">
+        	    <Run Text="This app lists all the Office 365 capabilities available for the signed in Office 365 user such as Mail, Calendar, Contacts, My Files. It will discover the service endpoint Uri and resource Id for each capability which are required later for you to authenticate and get access tokens to those resources. "/>
+        	    <LineBreak/><LineBreak/>
+        	    <Run Text="In order to execute this app successfully, make sure your Azure AD application associated with this Windows Store app has permissions to access one Office 365 resource (Mail, Calendar, Contacts or My Files)."/>
+        	    For more information, see <Bold><Hyperlink Foreground="Blue" NavigateUri="http://aka.ms/adding-0365api-to-your-visual-studio-project">Adding Office 365 API service to your Visual Studio project.</Hyperlink></Bold>.
+            </TextBlock>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" Margin="48,230,0,0" >
+            <Button x:Name="btnGetAllCapabilities"              
+                    Width="300"
+                    Height="60"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="Discover All Capabilities"
+                    FontSize="24"
+                    Foreground="{StaticResource ButtonForegroundThemeBrush}"
+                    Background="{StaticResource ButtonBackgroundThemeBrush}"
+                    BorderBrush="{StaticResource ButtonBorderThemeBrush}"
+                    ClickMode="Press"
+                    Click="btnGetAllCapabilities_Click" />
+            <Button x:Name="btnDiscoverContacts"                 
+                    Width="300" 
+                    Height="60" 
+                    HorizontalAlignment="Left" 
+                    VerticalAlignment="Top" 
+                    Content="Discover Contacts" 
+                    FontSize="24" 
+                    Foreground="{StaticResource ButtonForegroundThemeBrush}" 
+                    Background="{StaticResource ButtonBackgroundThemeBrush}" 
+                    BorderBrush="{StaticResource ButtonBorderThemeBrush}" 
+                    ClickMode="Press" 
+                    Click="btnDiscoverContacts_Click" />
+            <Button x:Name="btnDiscoverCalendar"                 
+                    Width="300" 
+                    Height="60" 
+                    HorizontalAlignment="Left" 
+                    VerticalAlignment="Top" 
+                    Content="Discovery Calendar" 
+                    FontSize="24" 
+                    Foreground="{StaticResource ButtonForegroundThemeBrush}" 
+                    Background="{StaticResource ButtonBackgroundThemeBrush}" 
+                    BorderBrush="{StaticResource ButtonBorderThemeBrush}" 
+                    ClickMode="Press" 
+                    Click="btnDiscoverCalendar_Click" />
+            <Button x:Name="btnDiscoverMail"                 
+                    Width="300" 
+                    Height="60" 
+                    HorizontalAlignment="Left" 
+                    VerticalAlignment="Top" 
+                    Content="Discover Mail" 
+                    FontSize="24" 
+                    Foreground="{StaticResource ButtonForegroundThemeBrush}" 
+                    Background="{StaticResource ButtonBackgroundThemeBrush}" 
+                    BorderBrush="{StaticResource ButtonBorderThemeBrush}" 
+                    ClickMode="Press" 
+                    Click="btnDiscoverMail_Click"/>
+            <Button x:Name="btnDiscoverMyFiles"         	
+        	        Width="300" 
+        	        Height="60" 
+        	        HorizontalAlignment="Left" 
+        	        VerticalAlignment="Top" 
+        	        Content="Discover My Files" 
+        	        FontSize="24" 
+        	        Foreground="{StaticResource ButtonForegroundThemeBrush}" 
+        	        Background="{StaticResource ButtonBackgroundThemeBrush}" 
+        	        BorderBrush="{StaticResource ButtonBorderThemeBrush}" 
+        	        ClickMode="Press" 
+        	        Click="btnDiscoverMyFiles_Click" />
+        </StackPanel>
+        <TextBox x:Name="txtBoxStatus" 
+                    IsReadOnly="True"
+                    Margin="360,230,48,48" 
+                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch" 
+                    TextWrapping="Wrap"  
+                    FontSize="18" 
+                    Foreground="Black" 
+                    BorderBrush="{StaticResource ButtonBorderThemeBrush}" 
+                    ScrollViewer.VerticalScrollBarVisibility="Visible" />
+
+
+    </Grid>
+</Page>
