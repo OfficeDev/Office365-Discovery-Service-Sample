@@ -51,7 +51,6 @@ namespace Win8ServiceDiscovery
 
             String discoveryResultText = "Capability: {0} \nEndpoint Uri: {1} \nResource Id: {2}\n\n";
 
-            //var capabilitiesResult = await GetAllCapabilityDiscoveryResult();
             var capabilitiesResult = await Office365ServiceHelper.GetAllCapabilityDiscoveryResultAsync();
 
             foreach (var capability in capabilitiesResult)
@@ -71,7 +70,6 @@ namespace Win8ServiceDiscovery
 
             var capabilityContacts = ServiceCapabilities.Contacts.ToString();
 
-            //CapabilityDiscoveryResult discoveryCapabilityResult = await GetDiscoveryCapabilityResultAsync(capability);
             CapabilityDiscoveryResult discoveryCapabilityResult = await Office365ServiceHelper.GetDiscoveryCapabilityResultAsync(capabilityContacts);
 
             txtBoxStatus.Text = String.Format(discoveryResultText,
