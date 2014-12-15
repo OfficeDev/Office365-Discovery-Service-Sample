@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="93cd06df-f2a0-40d1-90fd-7968a9576599" Publisher="CN=prueker" Version="1.1.0.0" />
+  <Identity Name="93cd06df-f2a0-40d1-90fd-7968a9576599" Publisher="CN=iouris" Version="1.1.0.0" />
   <Properties>
     <DisplayName>Win8ServiceDiscovery</DisplayName>
     <PublisherDisplayName>prueker</PublisherDisplayName>
@@ -29,5 +29,6 @@
     <Capability Name="privateNetworkClientServer" />
     <Capability Name="enterpriseAuthentication" />
     <Capability Name="internetClient" />
+    <Capability Name="sharedUserCertificates" />
   </Capabilities>
 </Package>

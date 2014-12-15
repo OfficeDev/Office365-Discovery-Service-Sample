@@ -16,11 +16,8 @@
 
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Microsoft.Office365.Discovery;
+using Microsoft.Office365.OutlookServices;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Windows.Security.Authentication.Web;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -35,105 +32,46 @@ namespace Win8ServiceDiscovery
     {
         #region Private Fields and Constants
 
-        //
-        // The Client ID is used by the application to uniquely identify itself to Azure AD.
-        // The Authority is the sign-in URL of the tenant.
-        //
-        static readonly string authority = "https://login.windows.net/Common/";
-        static readonly string clientId = App.Current.Resources["ida:ClientID"].ToString();
+        ////
+        //// The Client ID is used by the application to uniquely identify itself to Azure AD.
+        //// The Authority is the sign-in URL of the tenant.
+        ////
+        //static readonly string authority = "https://login.windows.net/Common/";
+        //static readonly string clientId = App.Current.Resources["ida:ClientID"].ToString();
 
-        static readonly Uri discoveryServiceEndpointUri = new Uri("https://api.office.com/discovery/v1.0/me/");
-        static readonly string discoveryServiceResourceId = "https://api.office.com/discovery/";
+        //static readonly Uri discoveryServiceEndpointUri = new Uri("https://api.office.com/discovery/v1.0/me/");
+        //static readonly string discoveryServiceResourceId = "https://api.office.com/discovery/";
 
-        static readonly string capabilityMail = "Mail";
-        static readonly string capabilityCalendar = "Calendar";
-        static readonly string capabilityContacts = "Contacts";
-        static readonly string capabilityMyFiles = "MyFiles";
+        //static readonly string capabilityMail = "Mail";
+        //static readonly string capabilityCalendar = "Calendar";
+        //static readonly string capabilityContacts = "Contacts";
+        //static readonly string capabilityMyFiles = "MyFiles";
 
-        static DiscoveryClient discoveryClient;
+        //static DiscoveryClient discoveryClient;
+
         static AuthenticationContext authContext = null;
-        private Uri redirectURI = null;       
 
         #endregion
 
         #region Constructors
+
         public MainPage()
         {
             this.InitializeComponent();
-
-            //
-            // Every Windows Store application has a unique URI.
-            // Windows ensures that only this application will receive messages sent to this URI.
-            // ADAL uses this URI as the application's redirect URI to receive OAuth responses.
-            // 
-            // To determine this application's redirect URI, which is necessary when registering the app
-            //      in AAD, set a breakpoint on the next line, run the app, and copy the string value of the URI.
-            //      This is the only purposes of this line of code, it has no functional purpose in the application.
-            //
-            redirectURI = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();           
         }
+
         #endregion
 
-        private async Task<string> GetAccessToken(string serviceResourceId)
-        {
-            string accessToken = null;
-
-            if(authContext == null)
-            {
-                authContext = new AuthenticationContext(authority);
-
-                if (authContext.TokenCache.ReadItems().Count() > 0)
-                {
-                    var tokenCache = authContext.TokenCache.ReadItems().First();
-                    authContext = new AuthenticationContext(tokenCache.Authority);
-                }
-            }                     
-
-            var authResult = await authContext.AcquireTokenAsync(serviceResourceId, clientId, redirectURI);
-
-            if(authResult.Status != AuthenticationStatus.Success)
-            {
-                if (authResult.Error == "authentication_canceled")
-                {
-                    // The user cancelled the sign-in, no need to display a message.
-                }
-                else
-                {
-                    MessageDialog dialog = new MessageDialog(string.Format("If the error continues, please contact your administrator.\n\nError: {0}\n\n Error Description:\n\n{1}", authResult.Error, authResult.ErrorDescription), "Sorry, an error occurred while signing you in.");
-                    await dialog.ShowAsync();
-                }                
-            }
-
-            accessToken = authResult.AccessToken;
-
-            return accessToken;
-        }
-
-        private DiscoveryClient GetDiscoveryClient()
-        {
-            if(discoveryClient == null)
-            {
-                discoveryClient = new DiscoveryClient(discoveryServiceEndpointUri,
-                    async () =>
-                    {
-                        return await GetAccessToken(discoveryServiceResourceId);
-                    });
-            }
-
-            return discoveryClient;
-
-        }
         private async void btnGetAllCapabilities_Click(object sender, RoutedEventArgs e)
         {
             txtBoxStatus.Text = "";
 
             String discoveryResultText = "Capability: {0} \nEndpoint Uri: {1} \nResource Id: {2}\n\n";
 
-            discoveryClient = GetDiscoveryClient();
+            //var capabilitiesResult = await GetAllCapabilityDiscoveryResult();
+            var capabilitiesResult = await Office365ServiceHelper.GetAllCapabilityDiscoveryResultAsync();
 
-            var discoveryCapabilityResult = await discoveryClient.DiscoverCapabilitiesAsync();
-
-            foreach(var capability in discoveryCapabilityResult)
+            foreach (var capability in capabilitiesResult)
             {
                 txtBoxStatus.Text += String.Format(discoveryResultText,
                                                    capability.Key,
@@ -148,23 +86,48 @@ namespace Win8ServiceDiscovery
         {
             String discoveryResultText = "Capability: {0} \nEndpoint Uri: {1} \nResource Id: {2}\n\n";
 
-            discoveryClient = GetDiscoveryClient();
+            var capabilityContacts = ServiceCapabilities.Contacts.ToString();
 
-            var discoveryCapabilityResult = await discoveryClient.DiscoverCapabilityAsync(capabilityContacts);
+            //CapabilityDiscoveryResult discoveryCapabilityResult = await GetDiscoveryCapabilityResultAsync(capability);
+            CapabilityDiscoveryResult discoveryCapabilityResult = await Office365ServiceHelper.GetDiscoveryCapabilityResultAsync(capabilityContacts);
 
             txtBoxStatus.Text = String.Format(discoveryResultText,
                                                    capabilityContacts,
                                                    discoveryCapabilityResult.ServiceEndpointUri.ToString(),
                                                    discoveryCapabilityResult.ServiceResourceId).Replace("\n", Environment.NewLine);
+
+            OutlookServicesClient outlookContactsClient = new OutlookServicesClient(discoveryCapabilityResult.ServiceEndpointUri,
+               async () =>
+               {
+                   return await Office365ServiceHelper.GetAccessTokenForResourceAsync(discoveryCapabilityResult);
+
+               });
+
+            var contactsResults = await outlookContactsClient.Me.Contacts.ExecuteAsync();
+
+            do
+            {
+                var contacts = contactsResults.CurrentPage;
+                foreach (var contact in contacts)
+                {
+                    txtBoxStatus.Text += String.Format(discoveryResultText,
+                                                    capabilityContacts,
+                                                    contact.DisplayName,
+                                                    contact.JobTitle).Replace("\n", Environment.NewLine);
+                }
+
+                contactsResults = await contactsResults.GetNextPageAsync();
+
+            } while (contactsResults != null);
         }
 
         private async void btnDiscoverCalendar_Click(object sender, RoutedEventArgs e)
         {
             String discoveryResultText = "Capability: {0} \nEndpoint Uri: {1} \nResource Id: {2}\n\n";
 
-            discoveryClient = GetDiscoveryClient();
+            var capabilityCalendar = ServiceCapabilities.Calendar.ToString();
 
-            var discoveryCapabilityResult = await discoveryClient.DiscoverCapabilityAsync(capabilityCalendar);
+            CapabilityDiscoveryResult discoveryCapabilityResult = await Office365ServiceHelper.GetDiscoveryCapabilityResultAsync(capabilityCalendar);
 
             txtBoxStatus.Text = String.Format(discoveryResultText,
                                                    capabilityCalendar,
@@ -176,9 +139,9 @@ namespace Win8ServiceDiscovery
         {
             String discoveryResultText = "Capability: {0} \nEndpoint Uri: {1} \nResource Id: {2}\n\n";
 
-            discoveryClient = GetDiscoveryClient();
+            var capabilityMail = ServiceCapabilities.Mail.ToString();
 
-            var discoveryCapabilityResult = await discoveryClient.DiscoverCapabilityAsync(capabilityMail);
+            CapabilityDiscoveryResult discoveryCapabilityResult = await Office365ServiceHelper.GetDiscoveryCapabilityResultAsync(capabilityMail);
 
             txtBoxStatus.Text = String.Format(discoveryResultText,
                                                    capabilityMail,
@@ -190,9 +153,9 @@ namespace Win8ServiceDiscovery
         {
             String discoveryResultText = "Capability: {0} \nEndpoint Uri: {1} \nResource Id: {2}\n\n";
 
-            discoveryClient = GetDiscoveryClient();
+            var capabilityMyFiles = ServiceCapabilities.MyFiles.ToString();
 
-            var discoveryCapabilityResult = await discoveryClient.DiscoverCapabilityAsync(capabilityMyFiles);
+            CapabilityDiscoveryResult discoveryCapabilityResult = await Office365ServiceHelper.GetDiscoveryCapabilityResultAsync(capabilityMyFiles);
 
             txtBoxStatus.Text = String.Format(discoveryResultText,
                                                    capabilityMyFiles,
