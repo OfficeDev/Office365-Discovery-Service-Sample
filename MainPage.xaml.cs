@@ -32,23 +32,6 @@ namespace Win8ServiceDiscovery
     {
         #region Private Fields and Constants
 
-        ////
-        //// The Client ID is used by the application to uniquely identify itself to Azure AD.
-        //// The Authority is the sign-in URL of the tenant.
-        ////
-        //static readonly string authority = "https://login.windows.net/Common/";
-        //static readonly string clientId = App.Current.Resources["ida:ClientID"].ToString();
-
-        //static readonly Uri discoveryServiceEndpointUri = new Uri("https://api.office.com/discovery/v1.0/me/");
-        //static readonly string discoveryServiceResourceId = "https://api.office.com/discovery/";
-
-        //static readonly string capabilityMail = "Mail";
-        //static readonly string capabilityCalendar = "Calendar";
-        //static readonly string capabilityContacts = "Contacts";
-        //static readonly string capabilityMyFiles = "MyFiles";
-
-        //static DiscoveryClient discoveryClient;
-
         static AuthenticationContext authContext = null;
 
         #endregion
