@@ -5,6 +5,13 @@ This sample lists all the Office 365 capabilities available for the signed in Of
 
 Note that, in order for your Windows Store application to authenticate to Office 365 discovery service, your Azure AD application should have permissions to at least one Office 365 API service. 
 
+**Update 12/15/2014**
+Sample now caches the information from the discovery service so the app doesn't need to query the discovery service everytime to create the respective service client. Since this is a Windows Store app, we use the local storage and write the information in a file called DiscoveryInfo.txt.
+
+You can look at the following class files to understand how the caching works:
+- [Office365\DiscoveryServiceCache.cs](https://github.com/OfficeDev/Office365-Discovery-Service-Sample/blob/master/Office365/DiscoveryServiceCache.cs)
+- [Office365\Office365ServiceHelper.cs](https://github.com/OfficeDev/Office365-Discovery-Service-Sample/blob/master/Office365/Office365ServiceHelper.cs)
+
 ## How to Run this Sample
 To run this sample, you need:
 
