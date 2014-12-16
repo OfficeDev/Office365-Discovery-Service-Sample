@@ -48,7 +48,7 @@ namespace Win8ServiceDiscovery
             set;
         }
 
-        public static async Task<DiscoveryServiceCache> Load()
+        public static async Task<DiscoveryServiceCache> LoadAsync()
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
             try
@@ -79,11 +79,11 @@ namespace Win8ServiceDiscovery
             return null;
         }
 
-        public static async Task<ServiceCapabilityCache> Load(ServiceCapabilities capability)
+        public static async Task<ServiceCapabilityCache> LoadAsync(ServiceCapabilities capability)
         {
             CapabilityDiscoveryResult capabilityDiscoveryResult = null;
 
-            DiscoveryServiceCache cache = await Load();
+            DiscoveryServiceCache cache = await LoadAsync();
 
             cache.DiscoveryInfoForServices.TryGetValue(capability.ToString(), out capabilityDiscoveryResult);
 
@@ -99,7 +99,7 @@ namespace Win8ServiceDiscovery
             };
         }
 
-        public static async Task<DiscoveryServiceCache> CreateAndSave(string userId, IDictionary<string, CapabilityDiscoveryResult> discoveryInfoForServices)
+        public static async Task<DiscoveryServiceCache> CreateAndSaveAsync(string userId, IDictionary<string, CapabilityDiscoveryResult> discoveryInfoForServices)
         {
             var cache = new DiscoveryServiceCache
             {

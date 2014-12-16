@@ -116,7 +116,7 @@ namespace Win8ServiceDiscovery
 
             var discoveryCapabilityResult = await discoveryClient.DiscoverCapabilitiesAsync();
 
-            discoveryCache = await DiscoveryServiceCache.CreateAndSave(userId, discoveryCapabilityResult);
+            discoveryCache = await DiscoveryServiceCache.CreateAndSaveAsync(userId, discoveryCapabilityResult);
 
             return discoveryCache;
         }
@@ -127,7 +127,7 @@ namespace Win8ServiceDiscovery
 
             DiscoveryServiceCache discoveryCache = null;
 
-            var cacheResult = await DiscoveryServiceCache.Load(serviceCapability);
+            var cacheResult = await DiscoveryServiceCache.LoadAsync(serviceCapability);
 
             if (cacheResult == null)
             {
@@ -149,7 +149,7 @@ namespace Win8ServiceDiscovery
         {
             DiscoveryServiceCache discoveryCache = null;
 
-            var cacheResult = await DiscoveryServiceCache.Load();
+            var cacheResult = await DiscoveryServiceCache.LoadAsync();
 
             if (cacheResult == null)
             {
@@ -163,7 +163,7 @@ namespace Win8ServiceDiscovery
 
         public static async Task<CapabilityDiscoveryResult> GetDiscoveryCapabilityResultAsync(string capability)
         {
-            var cacheResult = await DiscoveryServiceCache.Load();
+            var cacheResult = await DiscoveryServiceCache.LoadAsync();
 
             CapabilityDiscoveryResult discoveryCapabilityResult = null;
 
