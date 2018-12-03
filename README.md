@@ -1,5 +1,5 @@
-Office 365 Discovery Service Sample
-==================================
+[ARCHIVED] Office 365 Discovery Service Sample
+==============================================
 
 This sample lists all the Office 365 capabilities available for the signed in Office 365 user such as Mail, Calendar, Contacts, My Files. It will discover the service endpoint Uri and resource Id for each capability which are required later for you to authenticate and get access tokens to those resources.
 
